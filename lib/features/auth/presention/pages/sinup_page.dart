@@ -1,10 +1,12 @@
 import 'package:blogflutter/core/theme/app_pallete.dart';
+import 'package:blogflutter/features/auth/presention/bloc_auth/auth_bloc.dart';
 import 'package:blogflutter/features/auth/presention/pages/login_page.dart';
 import 'package:blogflutter/features/auth/presention/widgets/auth_field.dart';
 import 'package:blogflutter/features/auth/presention/widgets/auth_gradinat_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SingupPage extends StatefulWidget {
   static route() => MaterialPageRoute(builder: (context) => const SingupPage());
@@ -54,7 +56,20 @@ class _SingupPageState extends State<SingupPage> {
               SizedBox(height: 10,),
               Authfield(hintText: "Password",controller: passwordController,isObscureText: true,),
               SizedBox(height: 20,),
-              AuthGridentButton( ButtonText: "Sign up",),
+              AuthGridentButton(
+                ButtonText: "Sign up",
+              onPressed: (){
+                  if(formKey.currentState!.validate()){
+                    context.read<AuthBloc>().add(
+                        AuthSignUp(
+                            email: emailController.text.trim(),
+                            password: passwordController.text.trim(),
+                            name: nameController.text.trim()
+                        ));
+                  }
+
+              },
+              ),
               SizedBox(height: 20,),
               GestureDetector(
                 onTap: (){

@@ -5,7 +5,10 @@ import '../../../../core/theme/app_pallete.dart';
 
 class AuthGridentButton extends StatelessWidget {
   final String ButtonText ;
-  const AuthGridentButton({super.key, required this.ButtonText});
+  final VoidCallback onPressed;
+  const AuthGridentButton({
+    super.key, required this.ButtonText,
+    required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +22,7 @@ class AuthGridentButton extends StatelessWidget {
       borderRadius: BorderRadius.circular(10)
     ),
       child: ElevatedButton(
-        onPressed: (){},
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppPallete.transparentColor,
          fixedSize: const Size(390, 50),
