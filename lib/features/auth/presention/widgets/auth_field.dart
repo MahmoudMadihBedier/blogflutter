@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class Authfield extends StatelessWidget {
+import '../../../../core/theme/app_pallete.dart';
+
+class Authfield extends StatefulWidget {
   final String hintText;
   final TextEditingController controller;
   final bool isObscureText;
@@ -12,19 +14,61 @@ class Authfield extends StatelessWidget {
   });
 
   @override
+  State<Authfield> createState() => _AuthfieldState();
+}
+
+class _AuthfieldState extends State<Authfield> {
+  bool hasText=false ;
+
+  bool isFocused=false;
+
+  FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(() {
+      setState(() {
+        isFocused = _focusNode.hasFocus;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: controller,
+      focusNode: _focusNode,
+      onChanged: (text){
+        if(text.isNotEmpty){
+          setState(() {
+            hasText=true;
+          });
+        }else{
+          setState(() {
+            hasText=false;
+          });
+        }
+      },
+
+      controller: widget.controller,
       decoration: InputDecoration(
-        hintText: hintText,
+        prefixIcon: isFocused? Icon(Icons.verified): null,
+        prefixIconColor: hasText?  AppPallete.gradient2: AppPallete.gradient3,
+        hintText: widget.hintText,
       ),
         validator: (value) {
           if (value!.isEmpty) {
-            return 'Please enter $hintText is required';
+            return 'Please enter ${widget.hintText} is required';
           }
           return null;
         },
-      obscureText: isObscureText,
+      obscureText: widget.isObscureText,
 
     );
   }
