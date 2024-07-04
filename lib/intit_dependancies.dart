@@ -15,7 +15,9 @@ Future<void> initDependancies() async {
     url: Appsecrets.superSecretURL,
     anonKey: Appsecrets.supabaseKey,
   );
-  serviceLocator.registerLazySingleton(() => supabase.client);
+  serviceLocator.registerLazySingleton(
+          () => supabase.client
+  );
 }
 void _initAuth(){
 serviceLocator.registerFactory<AuthRemoteDataSource>(
