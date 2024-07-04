@@ -9,16 +9,15 @@ import 'intit_dependancies.dart';
 void main()  async {
   WidgetsFlutterBinding.ensureInitialized();
   await initDependancies();
-  runApp(MultiBlocProvider(
-    providers: [
-      BlocProvider(
-          create: (_)=>serviceLocator<AuthBloc>()
+  runApp(
+      MultiBlocProvider(
+        providers: [
+          BlocProvider(
+          create: (_)=>serviceLocator<AuthBloc>(),
       ),
       
     ],
-    child: const MyApp(),
-
-
+       child: const MyApp(),
 
   ));
 }

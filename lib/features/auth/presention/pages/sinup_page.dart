@@ -43,6 +43,7 @@ class _SingupPageState extends State<SingupPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+
               Text('Sign up.',
               style: TextStyle(
                 fontSize: 50,
