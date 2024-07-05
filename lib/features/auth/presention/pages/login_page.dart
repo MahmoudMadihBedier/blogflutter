@@ -41,7 +41,7 @@ class _LoginPageState extends State<LoginPage> {
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
             if(state is AuthFailure){
-              showSnakBar(context: context, content: state.message);
+              showSnackBar(context,  state.message);
             }
           },
           builder: (context, state) {

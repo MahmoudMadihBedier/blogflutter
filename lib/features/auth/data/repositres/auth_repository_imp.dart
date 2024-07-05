@@ -1,84 +1,96 @@
 import 'package:blogflutter/core/error/failler.dart';
-import 'package:blogflutter/features/auth/domain/entities/user.dart';
+
 import 'package:blogflutter/features/auth/domain/repositry/auth_repositry.dart';
 import 'package:fpdart/src/either.dart';
 import 'package:fpdart/src/unit.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
+import '../../../../core/common/entities/user.dart';
+import '../../../../core/constants/constants.dart';
 import '../../../../core/error/exceptions.dart';
+import '../../../../core/network/connection_checker.dart';
 import '../data_sourses/auth_remote_data_sourse.dart';
+import '../models/user_model.dart';
 
-class AuthRepositroyImp implements AuthRepositry{
+
+
+class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
-  const AuthRepositroyImp(this.remoteDataSource);
+  final ConnectionChecker connectionChecker;
+  const AuthRepositoryImpl(
+      this.remoteDataSource,
+      this.connectionChecker,
+      );
 
   @override
-  Future<Either<Failure, Unit>> currentUser() async{
-    try{
-      final user = await remoteDataSource.getCurrentUserData();
-      if(user == null){
-        return left(Failure("User not logged In !! "));
+  Future<Either<Failure, User>> currentUser() async {
+    try {
+      if (!await (connectionChecker.isConnected)) {
+        final session = remoteDataSource.currentUserSession;
+
+        if (session == null) {
+          return left(Failure('User not logged in!'));
+        }
+
+        return right(
+          UserModel(
+            id: session.user.id,
+            email: session.user.email ?? '',
+            name: '',
+          ),
+        );
       }
-      ///////////////////////////////////////////////
-      return right ( user as Unit );
-      //////////////////3:37:33////////////////////////////
-    }on ServerException catch(e){
+      final user = await remoteDataSource.getCurrentUserData();
+      if (user == null) {
+        return left(Failure('User not logged in!'));
+      }
+
+      return right(user);
+    } on ServerException catch (e) {
       return left(Failure(e.message));
-
     }
-
   }
 
   @override
-  Future<Either<Failure, User>> loginWithEmailAndPassword({
+  Future<Either<Failure, User>> loginWithEmailPassword({
     required String email,
-    required String password
-  })async {
-   return _getUser(() async=> await
-
-   remoteDataSource.loginWithEmailAndPassword(
-       email: email,
-       password: password
-   ),
-   );
+    required String password,
+  }) async {
+    return _getUser(
+          () async => await remoteDataSource.loginWithEmailPassword(
+        email: email,
+        password: password,
+      ),
+    );
   }
 
   @override
-  Future<Either<Failure, User>> singUpWithEmailAndPassword({
+  Future<Either<Failure, User>> signUpWithEmailPassword({
     required String name,
     required String email,
     required String password,
-  }) async{
-      return _getUser(() async=> await
-
-      remoteDataSource.singUpWithEmailAndPassword(
-          name: name,
-          email: email,
-          password: password
+  }) async {
+    return _getUser(
+          () async => await remoteDataSource.signUpWithEmailPassword(
+        name: name,
+        email: email,
+        password: password,
       ),
-      );
-
-
+    );
   }
-  Future<Either<Failure,User>> _getUser(
-      Future<User>Function() fn,
-      )async{
-    try{
+
+  Future<Either<Failure, User>> _getUser(
+      Future<User> Function() fn,
+      ) async {
+    try {
+      if (!await (connectionChecker.isConnected)) {
+        return left(Failure(Constants.noConnectionErrorMessage));
+      }
       final user = await fn();
 
       return right(user);
-
-    }
-    on sb.AuthException catch(e) {
+    } on ServerException catch (e) {
       return left(Failure(e.message));
-    } on ServerException catch(e){
-      return left(Failure(e.message));
-
-
     }
-
   }
-
-
-  
 }

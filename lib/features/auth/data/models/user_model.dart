@@ -1,17 +1,30 @@
-import 'package:blogflutter/features/auth/domain/entities/user.dart';
+import '../../../../core/common/entities/user.dart';
 
-class UserModel extends User{
+
+class UserModel extends User {
   UserModel({
-    required super.name,
+    required super.id,
     required super.email,
-    required super.id
-})
-  ;
-  factory UserModel.fromjason(Map<String, dynamic> map) {
+    required super.name,
+  });
+
+  factory UserModel.fromJson(Map<String, dynamic> map) {
     return UserModel(
-      name: map['name']??'',
-      email: map['email']??'',
-      id: map['id']??'',
+      id: map['id'] ?? '',
+      email: map['email'] ?? '',
+      name: map['name'] ?? '',
+    );
+  }
+
+  UserModel copyWith({
+    String? id,
+    String? email,
+    String? name,
+  }) {
+    return UserModel(
+      id: id ?? this.id,
+      email: email ?? this.email,
+      name: name ?? this.name,
     );
   }
 }

@@ -1,30 +1,31 @@
 import 'package:blogflutter/core/error/failler.dart';
 import 'package:blogflutter/core/usecase/usecase.dart';
-import 'package:blogflutter/features/auth/domain/entities/user.dart';
 import 'package:blogflutter/features/auth/domain/repositry/auth_repositry.dart';
 import 'package:fpdart/src/either.dart';
 
-class UserSignUp implements UseCase<User,UserSingUpParams>{
-  final AuthRepositry authRepositry;
-  const UserSignUp(this.authRepositry);
+import '../../../../core/common/entities/user.dart';
+
+class UserSignUp implements UseCase<User, UserSignUpParams> {
+  final AuthRepository authRepository;
+  const UserSignUp(this.authRepository);
+
   @override
-  Future<Either<Failure, User>> call(param) async{
-   return await authRepositry.singUpWithEmailAndPassword(
-        name: param.name,
-        email: param.email,
-        password: param.password);
-
+  Future<Either<Failure, User>> call(UserSignUpParams params) async {
+    return await authRepository.signUpWithEmailPassword(
+      name: params.name,
+      email: params.email,
+      password: params.password,
+    );
   }
-
 }
-class UserSingUpParams{
-  final String name;
+
+class UserSignUpParams {
   final String email;
   final String password;
-  UserSingUpParams({
-    required this.name,
+  final String name;
+  UserSignUpParams({
     required this.email,
-    required this.password
+    required this.password,
+    required this.name,
   });
 }
-  
